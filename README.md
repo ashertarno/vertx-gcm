@@ -75,10 +75,12 @@ Let's take a look at each field in turn
 - `data`	A JSON object whose fields represents the key-value pairs of the message's payload data. If present, the payload data it will be included in the Intent as application data, with the key being the extra's name. For instance, `"data":{"score":"3x1"}` would result in an intent extra named score whose value is the string 3x1. There is no limit on the number of key/value pairs, though there is a limit on the total size of the message (4kb). The values could be any JSON object, but we recommend using strings, since the values will be converted to strings in the GCM server anyway. If you want to include objects or other non-string data types (such as integers or booleans), you have to do the conversion to string yourself. Also note that the key cannot be a reserved word (from or any word starting with google.). To complicate things slightly, there are some reserved words (such as collapse_key) that are technically allowed in payload data. However, if the request also contains the word, the value in the request will overwrite the value in the payload data. Hence using words that are defined as field names in this table is not recommended, even in cases where they are technically allowed. Optional.
 
 - `delay_while_idle`	If included, indicates that the message should not be sent immediately if the device is idle. The server will wait for the device to become active, and then only the last message for each collapse_key value will be sent. Optional. The default value is false, and must be a JSON boolean.
-time_to_live	How long (in seconds) the message should be kept on GCM storage if the device is offline. Optional (default time-to-live is 4 weeks, and must be set as a JSON number).
+
+- `time_to_live`	How long (in seconds) the message should be kept on GCM storage if the device is offline. Optional (default time-to-live is 4 weeks, and must be set as a JSON number).
 
 - `restricted_package_name`	A string containing the package name of your application. When set, messages will only be sent to registration IDs that match the package name. Optional. 
-dry_run	If included, allows developers to test their request without actually sending a message. Optional. The default value is false, and must be a JSON boolean. 
+
+- `dry_run`	If included, allows developers to test their request without actually sending a message. Optional. The default value is false, and must be a JSON boolean. 
 
 
 Response from GCM
