@@ -1,0 +1,4 @@
+{
+    "main": "net.atarno.vertx.gcm.server.GCMServer",
+    "worker": true
+}
