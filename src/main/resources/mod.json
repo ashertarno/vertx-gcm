@@ -1,4 +1,9 @@
 {
     "main": "net.atarno.vertx.gcm.server.GCMServer",
-    "worker": true
+    "worker": true,
+    "licenses": ["The Apache Software License Version 2.0"],
+    "description": "This module provides a Google Cloud Messaging for Android (GCM) server side solution for Vert.x.",
+    "author": "Asher Tarnopolski",
+    "keywords": ["gcm", "android", "push", "vert.x"],
+    "homepage": "https://github.com/ashertarno/vertx-gcm"
 }
