@@ -53,6 +53,7 @@ public class GCMServer extends BusModBase implements Handler<Message<JsonObject>
     private int gcm_min_backoff_delay;
     private int gcm_max_backoff_delay;
     private URI uri;
+    private HttpClient client;
 
     @Override
     public void start() {
@@ -71,6 +72,14 @@ public class GCMServer extends BusModBase implements Handler<Message<JsonObject>
             uri = new URI( voidNull( gcm_url ) );
         }
         catch ( URISyntaxException e ) {
+        }
+
+        client = vertx.createHttpClient()
+                .setHost( uri.getHost() )
+                .setPort( gcm_port );
+
+        if ( gcm_url.toLowerCase().startsWith( "https" ) ) {
+            client = client.setSSL( true ).setTrustAll( true );
         }
 
         eb.registerHandler( address, this );
@@ -188,21 +197,13 @@ public class GCMServer extends BusModBase implements Handler<Message<JsonObject>
     private void send( Message<JsonObject> message, JsonObject notif, String apiKey ) {
         logger.debug( "Sending POST to: " + gcm_url + " port:" + gcm_port + " with body: " + notif );
 
-        HttpClient client = vertx.createHttpClient()
-                .setHost( uri.getHost() )
-                .setPort( gcm_port );
-
-        if ( gcm_url.toLowerCase().startsWith( "https" ) ) {
-            client = client.setSSL( true ).setTrustAll( true );
-        }
-
         ResponseHelper helper = new ResponseHelper( gcm_min_backoff_delay );
 
-        submitGCM( helper, notif, apiKey, client, message, 0 );
+        submitGCM( helper, notif, apiKey, message, 0 );
 
     }
 
-    private void submitGCM( final ResponseHelper helper, final JsonObject notif, final String apiKey, final HttpClient client, final Message<JsonObject> message, final int attempt ) {
+    private void submitGCM( final ResponseHelper helper, final JsonObject notif, final String apiKey, final Message<JsonObject> message, final int attempt ) {
 
         final Buffer toSend;
         try {
@@ -255,7 +256,7 @@ public class GCMServer extends BusModBase implements Handler<Message<JsonObject>
                             if ( 2 * helper.getBackoff() < gcm_max_backoff_delay ) {
                                 helper.setBackoff( helper.getBackoff() * 2 );
                             }
-                            submitGCM( helper, newNotif, apiKey, client, message, attempt + 1 );
+                            submitGCM( helper, newNotif, apiKey,message, attempt + 1 );
                         }
                         else {
                             if ( helper.getResponse().isEmpty() ) {
