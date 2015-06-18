@@ -111,8 +111,10 @@ public class GCMServer extends BusModBase implements Handler<Message<JsonObject>
             return;
         }
 
-        int ttl = n.getInteger( "time_to_live" );
-        if ( ttl > gcm_max_seconds_to_leave ) {
+        Integer ttl = n.getInteger( "time_to_live" );
+        if (ttl == null) {
+            ttl = gcm_max_seconds_to_leave;
+        } else if ( ttl > gcm_max_seconds_to_leave ) {
             sendError( message, "Max value of 'time_to_live' exceeded: " + ttl + " > " + gcm_max_seconds_to_leave );
             return;
         }
